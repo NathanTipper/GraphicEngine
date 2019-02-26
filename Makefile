@@ -20,7 +20,7 @@ engine: $(OBJECTS) glad.o
 	$(CXX) $(CXXFLAGS) -o engine $(OBJECTS) $(LDLIBS) 
 
 glad.o : glad/glad.h
-	$(CC) -I$(INC_DIR) -c $(CCFLAGS) $^ -o $(SRC_DIR)/$@
+	$(CC) -I$(INC_DIR) -c $(CCFLAGS) $^ -o $(OBJ_DIR)/$@
 
 $(OBJECTS) : | $(OBJ_DIR)
 
