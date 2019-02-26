@@ -1,27 +1,35 @@
 CXX = g++
 CXXFLAGS = -Wall -g
 
-OBJECTS = $(addprefix $(OBJ_DIR)/, main.o)
-vpath %.h ./include
-vpath %.o ./obj
-vpath %.cc ./src
+CC = gcc
+CCFLAGS = -g
 
-SRC_DIR = src
-INC_DIR = include
-OBJ_DIR = obj
+OBJECTS = $(addprefix $(OBJ_DIR)/, main.o)
+LDLIBS = -lglfw3 -lGL -lX11 -lpthread -lXrandr -lXi -ldl -lXxf86vm -lXinerama \
+-lXcursor -lrt -lm
+
+SRC_DIR = ./src
+INC_DIR = ./include
+OBJ_DIR = ./obj
 
 $(OBJ_DIR)/%.o : %.cc
-	$(CXX) -c $(CXXFLAGS) $^ -o $@
+	$(CXX) -I$(INC_DIR) -c $(CXXFLAGS) $^ -o $@
 
-engine: $(OBJECTS)
+engine: $(OBJECTS) glad.o
 	@echo Starting installation
-	$(CXX) $(CXXFLAGS) -o engine $(OBJECTS)
+	$(CXX) $(CXXFLAGS) -o engine $(OBJECTS) $(LDLIBS) 
 
-$(OBJECTS): | $(OBJ_DIR)
+glad.o : glad/glad.h
+	$(CC) -I$(INC_DIR) -c $(CCFLAGS) $^ -o $(SRC_DIR)/$@
+
+$(OBJECTS) : | $(OBJ_DIR)
 
 $(OBJ_DIR):
 	mkdir obj
 
-.PHONY : clean
+.PHONY : clean cleanall
 clean:
 	rm -fr obj *~ engine
+
+cleanall: clean
+	rm -fr src/*~ include/*~
