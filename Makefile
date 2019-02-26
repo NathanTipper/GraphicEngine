@@ -4,28 +4,30 @@ CXXFLAGS = -Wall -g
 CC = gcc
 CCFLAGS = -g
 
-OBJECTS = $(addprefix $(OBJ_DIR)/, main.o)
-LDLIBS = -lglfw3 -lGL -lX11 -lpthread -lXrandr -lXi -ldl -lXxf86vm -lXinerama \
--lXcursor -lrt -lm
-
 SRC_DIR = ./src
 INC_DIR = ./include
 OBJ_DIR = ./obj
 
-$(OBJ_DIR)/%.o : %.cc
+OBJECTS = $(addprefix $(OBJ_DIR)/, main.o)
+LDLIBS = -lglfw3 -lGL -lX11 -lpthread -lXrandr -lXi -ldl -lXxf86vm -lXinerama \
+-lXcursor -lrt -lm
+
+$(OBJ_DIR)/%.o : $(SRC_DIR)/%.cc
+	@echo compiling c++ files
 	$(CXX) -I$(INC_DIR) -c $(CXXFLAGS) $^ -o $@
 
 engine: $(OBJECTS) glad.o
 	@echo Starting installation
-	$(CXX) $(CXXFLAGS) -o engine $(OBJECTS) $(LDLIBS) 
+	$(CXX) $(CXXFLAGS) -o engine $(OBJECTS) $(OBJ_DIR)/glad.o $(LDLIBS) 
 
-glad.o : glad/glad.h
+glad.o : $(SRC_DIR)/glad.c
+	@echo Compiling glad
 	$(CC) -I$(INC_DIR) -c $(CCFLAGS) $^ -o $(OBJ_DIR)/$@
 
 $(OBJECTS) : | $(OBJ_DIR)
 
 $(OBJ_DIR):
-	mkdir obj
+	mkdir $(OBJ_DIR)
 
 .PHONY : clean cleanall
 clean:
