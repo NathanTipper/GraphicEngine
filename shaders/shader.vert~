@@ -1,0 +1,2 @@
+#version
+layout (location = 0) in vcec3 aPos;
